@@ -4,27 +4,25 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 
-// var indexRouter = require('./routes/index');
+var indexRouter = require('./routes/index');
 
 var app = express();
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'pug');
+app.set('view engine', 'jade');
+
+app.set('views', path.join(__dirname, 'views'));
+app.engine('html', require('ejs').renderFile);
+app.set('view engine', 'html');
 
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
+app.use(express.static(path.join(__dirname, 'public')));
 
-// app.use(express.static(path.join(__dirname, 'public')));
-app.use(express.static(path.resolve(__dirname, '../client/build')));
-
-// app.use('/', indexRouter);//////////////
-
-app.get("/api", (req, res) => {
-  res.json({ message: "Hello from server!" });
-});
+app.use('/', indexRouter);
 
 app.get('*', function(req, res, next) {
   res.sendFile(path.resolve(__dirname, '../client/public', 'index.html'));
